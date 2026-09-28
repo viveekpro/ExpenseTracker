@@ -7,7 +7,7 @@ import { useAuth } from "../context/AuthContext";
 function Login() {
     const navigate = useNavigate();
     const { login } = useAuth();
-    const [ formData, setFormData ] = useState({
+    const [formData, setFormData] = useState({
         email: "",
         password: ""
     });
@@ -29,6 +29,10 @@ function Login() {
             login(data);
             navigate("/");
         } catch (error) {
+            console.log("LOGIN ERROR:", error);
+            console.log("RESPONSE:", error.response);
+            console.log("DATA:", error.response?.data);
+
             alert(
                 error.response?.data?.message || "Login failed :"
             );

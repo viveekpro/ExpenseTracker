@@ -8,12 +8,21 @@ export const getExpress = async ()=>{
     return response.data;
 }
 
-// create expense 
-export const createExpense = async(expenseData)=>{
-    const response = await axios.post(API_URL,
-    expenseData);
+// create expense
+export const createExpense = async (data) => {
+    const token = localStorage.getItem("token");
+    const response = await axios.post(
+        API_URL,
+        data,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
     return response.data;
-}
+};
+
 
 // update expense
 export const updateExpense = async(id, expenseData)=>{

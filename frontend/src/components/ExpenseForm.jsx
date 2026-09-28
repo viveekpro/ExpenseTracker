@@ -5,7 +5,7 @@ function ExpenseForm({ onExpenseAdded }) {
     const [formData, setFormData] = useState({
         title: "",
         amount: "",
-        category: "Food",
+        category: "",
         description: " ",
         expense_mode: "Cash",
         date: ""
@@ -24,8 +24,8 @@ function ExpenseForm({ onExpenseAdded }) {
             setFormData({
                 title: "",
                 amount: "",
-                category: "Food",
-                description: " ",
+                category: "",
+                description: "",
                 expense_mode: "Cash",
                 date: ""
             });
@@ -41,10 +41,10 @@ function ExpenseForm({ onExpenseAdded }) {
         <div className="expense-form">
             <h2>Add Expense</h2>
             <form onSubmit = {handleSubmit}>
-                <imput type="text" name = "title" placeholder ="Expense Title" value = {formData.title} onChange={handleChange}required/>
-                <imput type="number" name = "amount" placeholder ="Amount" value = {formData.amount} onChange={handleChange} required />
+                <input type="text" name = "title" placeholder ="Expense Title" value = {formData.title} onChange={handleChange}required/>
+                <input type="number" name = "amount" placeholder ="Amount" value = {formData.amount} onChange={handleChange} required />
 
-                <select name = "Categoty"
+                <select name = "category"
                 value = {formData.category} onChange = {handleChange}>
                     <option value="Food">Food</option>
                     <option value="Transport">Transport</option>
@@ -53,7 +53,7 @@ function ExpenseForm({ onExpenseAdded }) {
                     <option value="Rent">Rend</option>
                     <option value="Entertaiment">Entertaiment</option>
                     <option value="Health">health</option>
-                    <option value="Education">Eductyation</option>
+                    <option value="Education">Education</option>
                     <option value="Other">Other</option>
                 </select>
 
