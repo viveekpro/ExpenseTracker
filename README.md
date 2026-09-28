@@ -92,7 +92,7 @@ npm start
 
  ## 👨‍💻 Author
 
- **Vivek Kumar Sharma**\
+ **Viveek Kumar Sharma**\
  **Python & MERN Expert**
 
  ### 🏢 Barrownz Group
