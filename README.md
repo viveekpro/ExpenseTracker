@@ -39,7 +39,7 @@ ExpenseTracker/
  Clone the repository:
 
 ```
-git clone <repository-url>
+git clone https://github.com/viveekpro/ExpenseTracker.git
 cd ExpenseTracker
 ```
 
