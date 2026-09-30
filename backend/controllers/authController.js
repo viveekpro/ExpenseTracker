@@ -13,15 +13,21 @@ const generateToken = (userId) => {
 // register
 const register = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
-    if (!name || !email || !password) {
+    const { name, email, password, securityQuestion, securityAnswer } = req.body;
+    if (!name || !email || !password || !securityQuestion || !securityAnswer) {
       return res.status(400).json({
-        message: "Name, email and password are required",
+        message: "Name, email, password , security question and security answer are required",
       });
     }
     if (password.length < 6) {
       return res.status(400).json({
         message: "Password must be at least 6 characters",
+      });
+    }
+
+    if(securityAnswer.trim().length<2){
+      return res.status(400).json({
+        message: "Security answer must be at least 2 characters"
       });
     }
 
@@ -36,10 +42,13 @@ const register = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedSecurityAnswer = await bcrypt.hash(securityAnswer.trim().toLowerCase(), 10);
     const user = await User.create({
       name,
       email: email.toLowerCase(),
       password: hashedPassword,
+      securityQuestion,
+      securityAnswer: hashedSecurityAnswer
     });
 
     const token = generateToken(user._id);
