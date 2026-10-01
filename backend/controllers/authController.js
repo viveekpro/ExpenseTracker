@@ -13,10 +13,12 @@ const generateToken = (userId) => {
 // register
 const register = async (req, res) => {
   try {
-    const { name, email, password, securityQuestion, securityAnswer } = req.body;
+    const { name, email, password, securityQuestion, securityAnswer } =
+      req.body;
     if (!name || !email || !password || !securityQuestion || !securityAnswer) {
       return res.status(400).json({
-        message: "Name, email, password , security question and security answer are required",
+        message:
+          "Name, email, password , security question and security answer are required",
       });
     }
     if (password.length < 6) {
@@ -25,9 +27,9 @@ const register = async (req, res) => {
       });
     }
 
-    if(securityAnswer.trim().length<2){
+    if (securityAnswer.trim().length < 2) {
       return res.status(400).json({
-        message: "Security answer must be at least 2 characters"
+        message: "Security answer must be at least 2 characters",
       });
     }
 
@@ -42,13 +44,16 @@ const register = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const hashedSecurityAnswer = await bcrypt.hash(securityAnswer.trim().toLowerCase(), 10);
+    const hashedSecurityAnswer = await bcrypt.hash(
+      securityAnswer.trim().toLowerCase(),
+      10,
+    );
     const user = await User.create({
       name,
       email: email.toLowerCase(),
       password: hashedPassword,
       securityQuestion,
-      securityAnswer: hashedSecurityAnswer
+      securityAnswer: hashedSecurityAnswer,
     });
 
     const token = generateToken(user._id);
@@ -116,9 +121,9 @@ const login = async (req, res) => {
 const getProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user.userId).select("-password");
-    if(!user){
+    if (!user) {
       return res.status(404).json({
-        message: "User not found"
+        message: "User not found",
       });
     }
     res.status(200).json(user);
@@ -130,106 +135,231 @@ const getProfile = async (req, res) => {
   }
 };
 
-// update profile 
-const updateProfile = async(req, res)=>{
-try{
-  const {name, email, profileImage } = req.body;
-  const user = await User.findById(req.user.userId);
-  if(!user){
-    return res.status(404).json({
-      message:"User not found"
-    });
-  }
-  if(name){
-    user.name = name;
-  }
-  if(email){
-    const exitingUser = await User.findOne({
-      email:email.toLowerCase(),
-      _id: {$ne:user._id}
-    });
-
-    if (exitingUser){
-      return res.status(400).json({
-        message:"Email already in use"
+// update profile
+const updateProfile = async (req, res) => {
+  try {
+    const { name, email, profileImage } = req.body;
+    const user = await User.findById(req.user.userId);
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
       });
     }
-    user.email = email.toLowerCase();
-  }
-  if(profileImage !== undefined){
-    user.profileImage = profileImage;
-  } 
-  await user.save();
-  res.status(200).json({
-    message: "Profile updated successfully",
-    user:{
-      id:user._id,
-      name: user.name,
-      email:user.email,
-      profileImage: user.profileImage
+    if (name) {
+      user.name = name;
     }
-  });
+    if (email) {
+      const exitingUser = await User.findOne({
+        email: email.toLowerCase(),
+        _id: { $ne: user._id },
+      });
 
-}catch(error){
- res.status(500).json({
+      if (exitingUser) {
+        return res.status(400).json({
+          message: "Email already in use",
+        });
+      }
+      user.email = email.toLowerCase();
+    }
+    if (profileImage !== undefined) {
+      user.profileImage = profileImage;
+    }
+    await user.save();
+    res.status(200).json({
+      message: "Profile updated successfully",
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        profileImage: user.profileImage,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
       message: "Failed to update profile",
       error: error.message,
     });
-}
+  }
 };
 
-const changePassword = async(req,res)=>{
-try{
-  const {
-    currentPassword,
-    newPassword
-  } = req.body;
-  
-  if(!currentPassword || !newPassword){
-    return res.status(400).json({
-      message: "Current and new password are required"
-    });
-  }
-  if(newPassword.length<6){
-    return res.status(400).json({
-      message:"New password must be at least 6 charactors"
-    });
-  }
-  const user = await User.findById(req.user.userId);
-  if(!user){
-    return res.status(404).json({
-      message:"User not found"
-    });
-  }
-  const isPasswordCorrect = await bcrypt.compare(currentPassword, user.password);
-  if(!isPasswordCorrect){
-    return res.status(400).json({
-      message: "Current paasword is incorrect"
-    });
-  }
-  user.password = await bcrypt.hash(
-    newPassword,
-    10
-  );
-  await user.save();
-  res.status(200).json({
-    message:"Password Changed successfully"
-  });
+// Change Password
+const changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
 
-}catch(error){
- res.status(500).json({
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({
+        message: "Current and new password are required",
+      });
+    }
+    if (newPassword.length < 6) {
+      return res.status(400).json({
+        message: "New password must be at least 6 charactors",
+      });
+    }
+    const user = await User.findById(req.user.userId);
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+    const isPasswordCorrect = await bcrypt.compare(
+      currentPassword,
+      user.password,
+    );
+    if (!isPasswordCorrect) {
+      return res.status(400).json({
+        message: "Current paasword is incorrect",
+      });
+    }
+    user.password = await bcrypt.hash(newPassword, 10);
+    await user.save();
+    res.status(200).json({
+      message: "Password Changed successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
       message: "Failed to change password",
       error: error.message,
     });
-}
-
-
+  }
 };
+
+// start : get security question
+const getSecurityQuestion = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({
+        message: "Email is required",
+      });
+    }
+    const user = await User.findOne({
+      email: email.toLowerCase(),
+    }).select("securityQuestion");
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+    res.status(200).json({
+      securityQuestion: user.securityQuestion,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to get security question",
+      error: error.message,
+    });
+  }
+};
+// end
+
+// start : verify security answer
+const verifySecurityAnswer = async (req, res) => {
+  try {
+    const { email, securityAnswer } = req.body;
+    if (!email || !securityAnswer) {
+      return res.status(400).json({
+        message: "Email and security answer are required",
+      });
+    }
+    const user = await User.findOne({
+      email: email.toLowerCase(),
+    });
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+    const isAnswerCorrect = await bcrypt.compare(
+      securityAnswer.trim().toLowerCase(),
+      user.securityAnswer,
+    );
+
+    if (!isAnswerCorrect) {
+      return res.status(401).json({
+        message: "Incorrect security answer",
+      });
+    }
+    res.status(200).json({
+      message: "Security answer verified",
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to verify security answer",
+      error: error.message,
+    });
+  }
+};
+// end
+
+// start : reset Password
+const resetPassword = async (req, res) => {
+  try {
+    const { email, securityAnswer, newPassword, confirmNewPassword } = req.body;
+    // Check required fields
+    if (!email || !securityAnswer || !newPassword || !confirmNewPassword) {
+      res.status(400).json({
+        message:
+          "Email, security answer, new password and confirm password are required",
+      });
+    }
+    // password length validation
+    if (newPassword.length < 6) {
+      return res.status(400).json({
+        message: "New password must be at least 6 characters",
+      });
+    }
+    // confirm password validation
+    if (newPassword !== confirmNewPassword) {
+      return res.status(404).json({
+        message: "New Password and confirm password do not match",
+      });
+    }
+
+    // find user
+    const user = await User.findOne({
+      email: email.toLowerCase(),
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+    // verify security answer
+    const isAnswerCorrect = await bcrypt.compare(
+      securityAnswer.trim().toLowerCase(),
+      user.securityAnswer,
+    );
+    if (!isAnswerCorrect) {
+      return res.status(404).json({
+        message: "Incorrect security answer",
+      });
+    }
+    // Hash new Password
+    user.password = await bcrypt.hash(newPassword, 10);
+    await user.save();
+    res.status(200).json({
+      message: "password reset successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to reset password",
+      error: error.message,
+    });
+  }
+};
+// end
 
 module.exports = {
   register,
   login,
   getProfile,
   updateProfile,
-  changePassword
+  changePassword,
+  getSecurityQuestion,
+  verifySecurityAnswer,
+  resetPassword
 };
