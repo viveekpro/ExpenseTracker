@@ -95,7 +95,7 @@ npm start
  **Viveek Kumar Sharma**\
  **Python & MERN Expert**
 
- ### 🏢 Barrownz Group
+ ### 🏢 Barrownz Group (BPW)
 
 ---
 
