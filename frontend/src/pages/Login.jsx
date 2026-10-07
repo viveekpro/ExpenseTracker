@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { loginUser } from "../services/authApi"
+import { loginUser } from "../services/authApi";
 import { useAuth } from "../context/AuthContext";
-import Footer from "../components/Footer";
+
 
 
 function Login() {
     const navigate = useNavigate();
     const { login } = useAuth();
-    const [formData, setFormData] = useState({
+    const [FormData, setFormData] = useState({
         email: "",
         password: ""
     });
@@ -16,50 +16,49 @@ function Login() {
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({
-            ...formData,
+            ...FormData,
             [name]: value
         });
-    };
+    }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             const data = await loginUser(
-                formData
+                FormData
             );
             login(data);
             navigate("/");
         } catch (error) {
-            console.log("LOGIN ERROR:", error);
-            console.log("RESPONSE:", error.response);
-            console.log("DATA:", error.response?.data);
-
             alert(
-                error.response?.data?.message || "Login failed :"
+                error.response?.data?.message || "Login failed"
             );
         }
     };
-
     return (
         <>
             <div className="auth-container">
                 <div className="auth-card">
                     <h1>Login</h1>
                     <form onSubmit={handleSubmit}>
-                        <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} required />
-                        <input type="password" name="password" placeholder="Password" value={formData.password} onChange={handleChange} required />
-                        <button type="submit">
-                            Login
-                        </button>
+                        <input type="email" name="email" placeholder="Email" value={FormData.email} onChange={handleChange} required />
+                        <input type="password" name="password" placeholder="Password" value={FormData.password} onChange={handleChange} required />
+                        <button type="submit">Login</button>
                     </form>
-
                     <p>
                         Don't have an account?{" "}
-                        <Link to="/register"> Register </Link>
+                        <Link to="/register">Register</Link>
+                        <br />
+                        <Link to="/reset-password">
+                            Forgot Password?
+                        </Link>
                     </p>
                 </div>
             </div>
-            <Footer />
+            <footer className="landing-footer">
+                <strong>Expense Tracker</strong>
+                <span>Simple expense management for everyday life.</span>
+            </footer>
         </>
     );
 }

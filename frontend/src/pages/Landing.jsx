@@ -25,7 +25,7 @@ function Landing() {
                         </p>
 
                         <div className="hero-actions">
-                            <Link className="primary-cta" to={token ? "/home" : "/register"}>
+                            <Link className="primary-cta" to={token ? "/dashboard" : "/register"}>
                                 {token ? "Go to Dashboard" : "Get Started"}
                             </Link>
                             <Link className="secondary-cta" to={token ? "/profile" : "/login"}>
@@ -99,7 +99,7 @@ function Landing() {
                         <span>Ready when you are</span>
                         <h2>Start keeping your expenses organized.</h2>
                     </div>
-                    <Link to={token ? "/home" : "/register"} className="primary-cta">
+                    <Link to={token ? "/dashboard" : "/register"} className="primary-cta">
                         {token ? "Open Dashboard" : "Create Account"}
                     </Link>
                 </section>

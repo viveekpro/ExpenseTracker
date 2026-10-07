@@ -68,7 +68,7 @@ function Profile() {
                         <h1>Your Profile</h1>
                         <p>Manage the personal information connected to your Expense Tracker account.</p>
                     </div>
-                    <Link to="/home" className="profile-back">← Dashboard</Link>
+                    <Link to="/dashboard" className="profile-back">← Dashboard</Link>
                 </div>
 
                 <section className="profile-layout">
@@ -154,6 +154,13 @@ function Profile() {
                     </section>
                 </section>
             </main>
+
+            <footer className="landing-footer">
+                <strong>Expense Tracker</strong>
+                <span>
+                    Simple expense management for everyday life.
+                </span>
+            </footer>
         </div>
     );
 }
